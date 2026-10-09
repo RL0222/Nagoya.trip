@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Nagoya Autumn Trip 2026 🍁</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- HTML2Canvas for Image Export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            theme: {
+              50: '#f0f3ff',
+              100: '#e0e7ff',
+              200: '#c7d2fe',
+              300: '#a5b4fc',
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5',
+              dark: '#1e1b4b'
+            },
+            maple: {
+              red: '#c0392b',
+              orange: '#e67e22',
+              gold: '#f1c40f'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* 全局手機 App 樣式優化 */
+    body {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    /* 隱藏滾動條但保持滾動 */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* 飄落楓葉 CSS 動畫 */
+    .leaf-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .leaf {
+      position: absolute;
+      top: -10%;
+      user-select: none;
+      cursor: default;
+      animation-name: fall, sway;
+      animation-duration: 8s, 3s;
+      animation-timing-function: linear, ease-in-out;
+      animation-iteration-count: infinite, infinite;
+      animation-play-state: running, running;
+      opacity: 0.7;
+    }
+    @keyframes fall {
+      0% { top: -10%; }
+      100% { top: 105%; }
+    }
+    @keyframes sway {
+      0% { transform: translateX(0px) rotate(0deg); }
+      50% { transform: translateX(50px) rotate(180deg); }
+      100% { transform: translateX(0px) rotate(360deg); }
+    }
+
+    /* 底部導航欄高亮 */
+    .nav-btn.active {
+      color: #6366f1;
+      font-weight: bold;
+    }
+    .nav-btn.active i {
+      transform: translateY(-2px);
+    }
+
+    /* 水印背景圖片 (Pochacco 風格裝飾) */
+    .pochacco-bg {
+      background-image: url('https://png.pngtree.com/png-vector/20230906/ourmid/pngtree-dog-cartoon-vector-illustration-png-image_10011400.png');
+      background-repeat: no-repeat;
+      background-position: right 10px bottom 70px;
+      background-size: 80px auto;
+      opacity: 0.15;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body class="bg-theme-50 text-slate-800 h-full flex flex-col justify-between overflow-hidden relative">
+
+  <!-- 楓葉背景特效 -->
+  <div class="leaf-container" id="leafContainer"></div>
+
+  <!-- 頂部 Header -->
+  <header class="bg-white/90 backdrop-blur-md border-b border-theme-100 px-4 py-3 flex items-center justify-between z-20 sticky top-0">
+    <div class="flex items-center space-x-2">
+      <!-- Pochacco 圖示卡片 -->
+      <div class="w-9 h-9 rounded-full bg-theme-100 flex items-center justify-center border border-theme-200 overflow-hidden shadow-sm">
+        <img src="https://api.iconify.design/icon-park-outline:dog.svg?color=%236366f1" class="w-6 h-6" alt="Pochacco">
+      </div>
+      <div>
+        <h1 class="text-base font-bold text-slate-800 flex items-center gap-1">
+          Nagoya 楓葉之旅 🍁
+        </h1>
+        <p class="text-xs text-slate-500">2026.11.21 - 11.29 (9 Days)</p>
+      </div>
+    </div>
+    
+    <!-- 儲存狀態指示器 -->
+    <div id="saveStatus" class="text-xs bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm transition-all duration-300">
+      <i data-lucide="save" class="w-3.5 h-3.5"></i>
+      <span>已儲存</span>
+    </div>
+  </header>
+
+  <!-- 主內容區域 (可滾動) -->
+  <main class="flex-1 overflow-y-auto no-scrollbar p-4 space-y-4 pb-24 z-10 relative">
+    
+    <!-- 1. 行程總表 & 每日行程區 (SECTION: ITINERARY) -->
+    <section id="sec-itinerary" class="space-y-4">
+      
+      <!-- 天數快速選擇按鈕欄 -->
+      <div class="flex space-x-2 overflow-x-auto no-scrollbar py-1">
+        <button onclick="switchDay('all')" id="day-btn-all" class="day-tab px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-theme-600 text-white shadow-md">總覽</button>
+        <button onclick="switchDay(1)" id="day-btn-1" class="day-tab px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-white text-slate-600 border border-theme-200">D1 11/21</button>
+        <button onclick="switchDay(2)" id="day-btn-2" class="day-tab px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-white text-slate-600 border border-theme-200">D2 11/22</button>
+        <button onclick="switchDay(3)" id="day-btn-3" class="day-tab px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-white text-slate-600 border border-theme-200">D3 11/23</button>
+        <button onclick="switchDay(4)" id="day-btn-4" class="day-tab px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-white text-slate-600 border border-theme-200">D4 11/24</button>
+        <button onclick="switchDay(5)" id="day-btn-5" class="day-tab px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-white text-slate-600 border border-theme-200">D5 11/25</button>
+        <button onclick="switchDay(6)" id="day-btn-6" class="day-tab px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-white text-slate-600 border border-theme-200">D6 11/26</button>
+        <button onclick="switchDay(7)" id="day-btn-7" class="day-tab px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-white text-slate-600 border border-theme-200">D7 11/27</button>
+        <button onclick="switchDay(8)" id="day-btn-8" class="day-tab px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-white text-slate-600 border border-theme-200">D8 11/28</button>
+      </div>
+
+      <!-- 新增行程與備用景點按鈕 -->
+      <div class="flex justify-between items-center">
+        <h2 class="text-sm font-bold text-slate-700 flex items-center gap-1.5">
+          <i data-lucide="map-pin" class="w-4 h-4 text-theme-500"></i>
+          <span id="currentDayTitle">全行程Timeline</span>
+        </h2>
+        <div class="flex gap-2">
+          <button onclick="openBackupModal()" class="text-xs bg-amber-50 text-amber-700 border border-amber-200 px-2.5 py-1 rounded-lg flex items-center gap-1">
+            <i data-lucide="cloud-rain" class="w-3.5 h-3.5"></i> 備用/雨天景點
+          </button>
+          <button onclick="openAddItineraryModal()" class="text-xs bg-theme-600 text-white px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-sm">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i> 新增行程
+          </button>
+        </div>
+      </div>
+
+      <!-- 行程列表 (Timeline 卡片式結構) -->
+      <div id="itineraryContainer" class="space-y-3">
+        <!-- JS 動態生成行程卡片 -->
+      </div>
+    </section>
+
+    <!-- 2. 飯店 Check-in / Check-out 總彙整卡片 (SECTION: HOTELS) -->
+    <section id="sec-hotels" class="hidden space-y-3">
+      <h2 class="text-sm font-bold text-slate-700 flex items-center gap-1.5">
+        <i data-lucide="hotel" class="w-4 h-4 text-theme-500"></i>
+        每日飯店 Check-in / Check-out 規定
+      </h2>
+      <div id="hotelsContainer" class="space-y-3">
+        <!-- JS 動態渲染 4 間飯店資訊卡片 -->
+      </div>
+    </section>
+
+    <!-- 3. 記帳與分帳系統 (SECTION: EXPENSES) -->
+    <section id="sec-expenses" class="hidden space-y-4">
+      <!-- 匯率與頂部統計卡片 -->
+      <div class="bg-gradient-to-br from-theme-500 to-theme-700 rounded-2xl p-4 text-white shadow-lg space-y-3">
+        <div class="flex justify-between items-center border-b border-white/20 pb-2">
+          <span class="text-xs opacity-90">目前設定匯率 (1 JPY 換算 HKD)</span>
+          <div class="flex items-center gap-1">
+            <span class="text-xs font-mono">1 JPY =</span>
+            <input type="number" id="exchangeRateInput" step="0.0001" value="0.0520" onchange="updateExchangeRate(this.value)" class="w-16 bg-white/20 text-white text-xs px-1 py-0.5 rounded text-center border border-white/30 focus:outline-none">
