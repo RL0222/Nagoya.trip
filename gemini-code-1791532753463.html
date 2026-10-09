@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pochacco Nagoya Autumn Trip 🐶🍁</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- html2canvas for export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- Japanese Cute Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@400;500;700&family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            pochacco: {
+              blue: '#90E0EF',
+              purple: '#C8B6FF',
+              pink: '#FFC8DD',
+              lightBlue: '#F0F8FF',
+              darkPurple: '#5A4FCF',
+              accent: '#B8C0FF',
+              foodBg: '#FFF0F5'
+            }
+          },
+          fontFamily: {
+            round: ['"M PLUS Rounded 1c"', 'sans-serif'],
+            kiwi: ['"Kiwi Maru"', 'serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'M PLUS Rounded 1c', sans-serif;
+      background: linear-gradient(135deg, #E6F3FF 0%, #F5E6FF 100%);
+      min-height: 100vh;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .pochacco-card {
+      background: rgba(255, 255, 255, 0.93);
+      backdrop-filter: blur(10px);
+      border: 2.5px solid #C8B6FF;
+      border-radius: 1.5rem;
+      box-shadow: 0 8px 20px -4px rgba(90, 79, 207, 0.12);
+    }
+    .timeline-line::before {
+      content: '';
+      position: absolute;
+      top: 1rem;
+      bottom: 1rem;
+      left: 1.25rem;
+      width: 3px;
+      background: #C8B6FF;
+      border-radius: 2px;
+      z-index: 0;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      height: 4px;
+      width: 4px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background-color: #C8B6FF;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body class="text-slate-700 pb-28 max-w-md mx-auto shadow-2xl relative border-x-4 border-pochacco-purple min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 bg-gradient-to-r from-pochacco-blue via-pochacco-purple to-pochacco-pink p-4 text-white rounded-b-3xl shadow-md">
+    <div class="flex justify-between items-center">
+      <div class="flex items-center space-x-2">
+        <span class="text-3xl animate-bounce">🐶</span>
+        <div>
+          <h1 class="font-extrabold text-lg tracking-wide font-kiwi">名古屋秋楓專屬旅程 🍁</h1>
+          <p class="text-[11px] opacity-90">Pochacco Mobile Companion</p>
+        </div>
+      </div>
+      <div id="saveStatus" class="bg-white/30 backdrop-blur-md px-2.5 py-1 rounded-full text-[11px] font-bold border border-white/50">
+        💾 已儲存
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs (Mobile Bottom/Top Bar Style) -->
+  <nav class="sticky top-[72px] z-40 flex justify-around bg-white/95 backdrop-blur-md my-2 mx-3 p-1.5 rounded-2xl border-2 border-pochacco-purple shadow-sm">
+    <button onclick="switchTab('itinerary')" id="tab-itinerary" class="tab-btn flex-1 py-2 rounded-xl font-bold text-xs transition-all text-pochacco-darkPurple bg-pochacco-lightBlue border border-pochacco-purple">
+      <i class="fa-solid fa-route block text-base mb-0.5"></i>行程總表
+    </button>
+    <button onclick="switchTab('accounting')" id="tab-accounting" class="tab-btn flex-1 py-2 rounded-xl font-bold text-xs transition-all text-gray-500 hover:text-pochacco-darkPurple">
+      <i class="fa-solid fa-calculator block text-base mb-0.5"></i>記帳理帳
+    </button>
+    <button onclick="switchTab('converter')" id="tab-converter" class="tab-btn flex-1 py-2 rounded-xl font-bold text-xs transition-all text-gray-500 hover:text-pochacco-darkPurple">
+      <i class="fa-solid fa-coins block text-base mb-0.5"></i>雙向匯率
+    </button>
+  </nav>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 px-3">
+
+    <!-- Tab 1: Detailed Itinerary with Timeline & Food -->
+    <section id="sec-itinerary" class="space-y-3">
+      
+      <!-- Date Carousel Scroll -->
+      <div class="flex overflow-x-auto space-x-2 py-1 custom-scroll" id="dayButtons">
+        <!-- Dynamic Day Buttons -->
+      </div>
+
+      <!-- Hotel Master Card Accordion -->
+      <details class="bg-white rounded-2xl border-2 border-pochacco-blue p-3 shadow-sm">
+        <summary class="font-bold text-xs text-pochacco-darkPurple cursor-pointer flex justify-between items-center">
+          <span>🏨 4大飯店入住/退房規定 & 導航</span>
+          <i class="fa-solid fa-chevron-down text-xs"></i>
+        </summary>
+        <div class="mt-2 text-xs space-y-2 border-t pt-2 border-gray-100">
+          <div class="p-2 bg-blue-50 rounded-xl flex justify-between items-center">
+            <div>
+              <p class="font-bold text-blue-900">1. BASE LAYER HOTEL 名古屋錦</p>
+              <p class="text-[11px] text-gray-600">• Check-in: 15:00-22:00 | Check-out: 10:00前</p>
+            </div>
+            <a href="https://www.google.com/maps/search/?api=1&query=BASE+LAYER+HOTEL+名古屋錦" target="_blank" class="text-blue-600 px-2 py-1 bg-white rounded-lg border text-[11px] font-bold">導航</a>
+          </div>
+          <div class="p-2 bg-purple-50 rounded-xl flex justify-between items-center">
+            <div>
+              <p class="font-bold text-purple-900">2. 高山櫻庵溫泉旅館</p>
+              <p class="text-[11px] text-gray-600">• Check-in: 15:00-23:30 | Check-out: 11:00前</p>
+            </div>
+            <a href="https://www.google.com/maps/search/?api=1&query=高山櫻庵" target="_blank" class="text-purple-600 px-2 py-1 bg-white rounded-lg border text-[11px] font-bold">導航</a>
+          </div>
+          <div class="p-2 bg-pink-50 rounded-xl flex justify-between items-center">
+            <div>
+              <p class="font-bold text-pink-900">3. 下呂山形屋 (溫泉旅館)</p>
+              <p class="text-[11px] text-gray-600">• Check-in: 15:00-19:30 (含晚餐方案) | Check-out: 10:00前</p>
+            </div>
+            <a href="https://www.google.com/maps/search/?api=1&query=下呂山形屋" target="_blank" class="text-pink-600 px-2 py-1 bg-white rounded-lg border text-[11px] font-bold">導航</a>
+          </div>
+          <div class="p-2 bg-green-50 rounded-xl flex justify-between items-center">
+            <div>
+              <p class="font-bold text-green-900">4. 名古屋金山舒適飯店</p>
+              <p class="text-[11px] text-gray-600">• Check-in: 15:00後 | Check-out: 10:00前</p>
+            </div>
+            <a href="https://www.google.com/maps/search/?api=1&query=Comfort+Hotel+Nagoya+Kanayama" target="_blank" class="text-green-600 px-2 py-1 bg-white rounded-lg border text-[11px] font-bold">導航</a>
+          </div>
+        </div>
+      </details>
+
+      <!-- Day Details with Timeline Line -->
+      <div id="dayDetail" class="space-y-3">
+        <!-- Dynamic Schedule Items -->
+      </div>
+    </section>
+
+    <!-- Tab 2: Accounting & Mutual Settlement -->
+    <section id="sec-accounting" class="hidden space-y-4">
+      <!-- Add Expense Form Card -->
+      <div class="pochacco-card p-4 space-y-3">
+        <h2 class="font-extrabold text-base text-pochacco-darkPurple flex items-center gap-2">
+          <i class="fa-solid fa-receipt"></i> 新增分帳支出
+        </h2>
+        
+        <div class="space-y-2 text-xs">
+          <div>
+            <label class="font-bold block mb-1">項目名稱</label>
+            <input type="text" id="accItemName" placeholder="例如：蓬萊軒鰻魚飯晚餐" class="w-full p-2 rounded-xl border border-gray-300 focus:outline-none focus:border-pochacco-purple">
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="font-bold block mb-1">付款幣種</label>
+              <select id="accCurrency" class="w-full p-2 rounded-xl border border-gray-300 bg-white">
+                <option value="JPY">日圓 (JPY ¥)</option>
+                <option value="HKD">港幣 (HKD $)</option>
+              </select>
+            </div>
+            <div>
+              <label class="font-bold block mb-1">總金額</label>
+              <input type="number" id="accAmount" placeholder="金額" class="w-full p-2 rounded-xl border border-gray-300 focus:outline-none focus:border-pochacco-purple">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="font-bold block mb-1">先付人 (人名)</label>
+              <input type="text" id="accPayer" placeholder="例如：A" class="w-full p-2 rounded-xl border border-gray-300 focus:outline-none focus:border-pochacco-purple">
+            </div>
+            <div>
+              <label class="font-bold block mb-1">分攤模式</label>
+              <select id="accSplitType" onchange="toggleSplitInput()" class="w-full p-2 rounded-xl border border-gray-300 bg-white">
+                <option value="even">人均整除</option>
+                <option value="custom">自訂/分開付</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="evenPeopleBlock">
+            <label class="font-bold block mb-1">參與人數</label>
+            <input type="number" id="accPeopleCount" value="2" min="1" class="w-full p-2 rounded-xl border border-gray-300">
+          </div>
+
+          <div id="customPeopleBlock" class="hidden space-y-1">
+            <label class="font-bold block">成員個別金額 (格式: A:2000, B:3000)</label>
+            <textarea id="accCustomDetails" placeholder="A:2000&#10;B:3000" class="w-full p-2 rounded-xl border border-gray-300 h-16"></textarea>
+          </div>
+
+          <button onclick="addExpense()" class="w-full py-2.5 bg-gradient-to-r from-pochacco-purple to-pochacco-blue text-white rounded-xl font-bold shadow hover:opacity-90 transition">
+            ➕ 新增帳目
+          </button>
+        </div>
+      </div>
+
+      <!-- Expense List Card -->
+      <div class="pochacco-card p-4 space-y-3">
+        <div class="flex justify-between items-center">
+          <h2 class="font-extrabold text-base text-pochacco-darkPurple">🧾 帳單明細列表</h2>
+          <button onclick="clearSettled()" class="text-xs text-pochacco-darkPurple border border-pochacco-purple px-2 py-1 rounded-lg bg-white hover:bg-pochacco-lightBlue">
+            清除已結清
+          </button>
+        </div>
+        <div id="expenseList" class="space-y-2 max-h-56 overflow-y-auto custom-scroll text-xs">
+          <!-- Dynamic Expenses -->
+        </div>
+      </div>
+
+      <!-- Final Settlement Result Card -->
+      <div id="exportArea" class="pochacco-card p-4 space-y-3 bg-white">
+        <h2 class="font-extrabold text-base text-pochacco-darkPurple flex items-center justify-between">
+          <span>⚖️ 智能互扣最終帳單</span>
+          <span class="text-xs text-gray-400 font-normal">（雙幣顯示）</span>
+        </h2>
+        <div id="settlementResult" class="text-xs space-y-2 p-3 bg-pochacco-lightBlue/60 rounded-xl border border-pochacco-blue">
+          <!-- Dynamic Final Settlement Text -->
+        </div>
+        
+        <div class="flex gap-2">
+          <button onclick="exportAsText()" class="flex-1 py-2 bg-pochacco-purple text-white rounded-xl font-bold text-xs shadow">
+            📋 複製文字明細
+          </button>
+          <button onclick="exportAsImage()" class="flex-1 py-2 bg-pochacco-blue text-white rounded-xl font-bold text-xs shadow">
+            🖼️ 匯出圖檔
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 3: Currency Converter -->
+    <section id="sec-converter" class="hidden space-y-4">
+      <div class="pochacco-card p-4 space-y-4">
+        <h2 class="font-extrabold text-base text-pochacco-darkPurple flex items-center gap-2">
+          <i class="fa-solid fa-arrows-rotate"></i> 雙向匯率計算器
+        </h2>
+
+        <div class="p-3 bg-pochacco-lightBlue/60 rounded-xl text-xs space-y-2">
+          <div class="flex justify-between items-center">
+            <label class="font-bold">匯率設定 (1 JPY = ? HKD)</label>
+            <input type="number" step="0.0001" id="exchangeRateInput" value="0.0520" onchange="updateRate()" class="w-24 p-1 text-right rounded border border-gray-300">
+          </div>
+          <p class="text-gray-500 text-[10px]">預設: 1 JPY ≈ 0.052 HKD (或 1 HKD ≈ 19.23 JPY)</p>
+        </div>
+
+        <div class="space-y-3 text-sm">
+          <div class="bg-white p-3 rounded-xl border border-gray-200">
+            <label class="text-xs text-gray-500 block mb-1">日圓 (JPY ¥)</label>
+            <input type="number" id="inputJPY" oninput="convertFromJPY()" placeholder="0" class="w-full text-xl font-bold text-pochacco-darkPurple focus:outline-none">
+          </div>
+
+          <div class="text-center text-pochacco-purple">
+            <i class="fa-solid fa-arrow-down-up-lock text-lg"></i>
+          </div>
+
+          <div class="bg-white p-3 rounded-xl border border-gray-200">
+            <label class="text-xs text-gray-500 block mb-1">港幣 (HKD $)</label>
+            <input type="number" id="inputHKD" oninput="convertFromHKD()" placeholder="0" class="w-full text-xl font-bold text-pochacco-darkPurple focus:outline-none">
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const DATA_VERSION = "3.0";
+    let appData = {
+      version: DATA_VERSION,
+      currentDay: 0,
+      exchangeRate: 0.0520,
+      expenses: [],
+      itinerary: [
+        {
+          date: "11/21 (六) Day 1",
+          title: "抵達名古屋 ➔ 熱田神宮 ➔ 名站商圈",
+          items: [
+            { 
+              time: "14:30", 
+              duration: "停留 0.5 小時", 
+              title: "抵達中部國際機場 (NGO)", 
+              desc: "辦理入境與拿取行李", 
+              map: "https://www.google.com/maps/search/?api=1&query=中部国際空港"
+            },
+            {
+              isTransit: true,
+              time: "15:00",
+              title: "機場特急 ➔ 神宮前站",
+              desc: "搭乘名鐵常滑線特急（車程約 21 分鐘）",
+              map: "https://www.google.com/maps/dir/?api=1&origin=中部国際空港&destination=神宮前駅&travelmode=transit"
+            },
+            { 
+              time: "15:45 - 17:00", 
+              duration: "停留 1.25 小時", 
+              title: "熱田神宮 Atsuta Jingu", 
+              desc: "日本三大神宮之一，境內 24 小時開放。（註：寶物館與草薙館最後入場 16:10）", 
+              map: "https://www.google.com/maps/search/?api=1&query=熱田神宮",
+              exit: "神宮前站西口 徒步 3 分鐘",
+              food: "蓬萊軒神宮店 / 宮基屋 棊子麺 (宮きしめん)",
+              foodReason: "熱田神宮境內的宮きしめん平價美味，寬扁麵條Q彈吸汁，是熱田參拜必吃古早味！",
+              foodMap: "https://www.google.com/maps/search/?api=1&query=宮きしめん+神宮店"
+            },
+            {
+              isTransit: true,
+              time: "17:00",
+              title: "神宮前站 ➔ BASE LAYER HOTEL 名古屋錦",
+              desc: "搭乘名鐵至金山站，轉地鐵名城線至「久屋大通站」或「榮站」",
+              map: "https://www.google.com/maps/dir/?api=1&origin=神宮前駅&destination=BASE+LAYER+HOTEL+名古屋錦&travelmode=transit"
+            },
+            { 
+              time: "17:30 - 18:30", 
+              duration: "停留 1.0 小時", 
+              title: "BASE LAYER HOTEL 名古屋錦 Check-in", 
+              desc: "辦理入住寄放行李（櫃檯服務至 22:00）", 
+              map: "https://www.google.com/maps/search/?api=1&query=BASE+LAYER+HOTEL+名古屋錦"
+            },
+            { 
+              time: "18:30 - 20:30", 
+              duration: "停留 2.0 小時", 
+              title: "榮商圈 / 名站夜間 Shopping", 
+              desc: "Oasis 21、中部電力 MIRAI TOWER 夜景與藥妝血拼", 
+              map: "https://www.google.com/maps/search/?api=1&query=Oasis+21",
+              exit: "久屋大通站 4B 出口直達"
+            },
+            { 
+              time: "20:30 - 22:00", 
+              duration: "停留 1.5 小時", 
+              title: "晚餐 & HARBS 榮本店甜點", 
+              desc: "品嚐 HARBS 招牌水果千層蛋糕（Mille Crepes）", 
+              map: "https://www.google.com/maps/search/?api=1&query=HARBS+榮本店",
+              food: "HARBS 榮本店 水果千層蛋糕",
+              foodReason: "HARBS 全日本發源本店！6層新鮮水果搭配清爽鮮奶油，是名古屋最狂甜點地標。",
+              foodMap: "https://www.google.com/maps/search/?api=1&query=HARBS+榮本店"
+            }
+          ]
+        },
+        {
+          date: "11/22 (日) Day 2",
+          title: "銀杏秘境 ➔ TOYOTA紀念館 ➔ 榮商圈狂歡",
+          items: [
+            {
+              isTransit: true,
+              time: "09:30",
+              title: "市區 ➔ 祖父江銀杏公園",
+              desc: "名鐵名古屋本線至「一宮站」，轉尾西線至「山崎站」（車程 45 分鐘）",
+              map: "https://www.google.com/maps/dir/?api=1&origin=名古屋駅&destination=山崎駅(愛知県)&travelmode=transit"
+            },
+            { 
+              time: "10:30 - 12:00", 
+              duration: "停留 1.5 小時", 
+              title: "Sobue Ginnan Park (祖父江銀杏)", 
+              desc: "黃金銀杏村漫步賞楓景", 
+              map: "https://www.google.com/maps/search/?api=1&query=Sobue+Ginnan+Park",
+              exit: "名鐵尾西線「山崎站」徒步 5 分鐘"
+            },
+            { 
+              time: "12:15 - 13:30", 
+              duration: "停留 1.25 小時", 
+              title: "午餐：山本屋總本家 味噌煮烏龍麵", 
+              desc: "享用赤味噌濃郁烏龍麵", 
+              map: "https://www.google.com/maps/search/?api=1&query=山本屋總本家",
+              food: "山本屋總本家 味噌煮烏龍麵",
+              foodReason: "名古屋名物代表！以八丁赤味噌與高湯慢燉，手工粗烏龍麵嚼勁十足，土鍋保溫超讚。",
+              foodMap: "https://www.google.com/maps/search/?api=1&query=山本屋總本家"
+            },
+            { 
+              time: "14:00 - 16:00", 
+              duration: "停留 2.0 小時", 
+              title: "TOYOTA 產業技術紀念館", 
+              desc: "開館至 17:00（最後入場 16:30），安排 2 小時極充裕！", 
+              map: "https://www.google.com/maps/search/?api=1&query=トヨタ産業技術記念館",
+              exit: "名鐵「榮生站」徒步 3 分鐘"
+            },
+            { 
+              time: "16:30 - 20:30", 
+              duration: "停留 4.0 小時", 
+              title: "榮 / 矢場町商圈 Shopping 狂歡", 
+              desc: "PARCO / 松坂屋 / Sakae 地下街", 
+              map: "https://www.google.com/maps/search/?api=1&query=Nagoya+PARCO",
+              exit: "矢場町站 4號出口直通 PARCO"
+            },
+            { 
+              time: "20:30 - 22:00", 
+              duration: "停留 1.5 小時", 
+              title: "晚餐：風來坊手羽先", 
+              desc: "炸雞翅名店宵夜", 
+              map: "https://www.google.com/maps/search/?api=1&query=風來坊+榮",
+              food: "風來坊 元祖手羽先唐揚",
+              foodReason: "名古屋手羽先創始店！外皮香酥、淋上秘傳醬汁與胡椒粉，讓人一隻接一隻停不下來。",
+              foodMap: "https://www.google.com/maps/search/?api=1&query=風來坊+榮"
+            }
+          ]
+        },
+        {
+          date: "11/23 (一) Day 3",
+          title: "吉卜力公園一日遊 ➔ 蓬萊軒鰻魚飯",
+          items: [
+            {
+              isTransit: true,
+              time: "09:30",
+              title: "名古屋市區 ➔ 吉卜力公園",
+              desc: "地鐵東山線至「藤丘站」，轉 Linimo 至「愛・地球博記念公園站」",
+              map: "https://www.google.com/maps/dir/?api=1&origin=久屋大通駅&destination=愛・地球博記念公園駅&travelmode=transit"
+            },
+            { 
+              time: "10:30 - 12:30", 
+              duration: "停留 2.0 小時", 
+              title: "吉卜力公園 園區散策", 
+              desc: "青春之丘、魔女之谷與愛・地球博公園戶外景色", 
+              map: "https://www.google.com/maps/search/?api=1&query=愛・地球博記念公園",
+              exit: "Linimo 愛・地球博記念公園站 出站即達"
+            },
+            { 
+              time: "12:30 - 13:00", 
+              duration: "停留 0.5 小時", 
+              title: "午餐：園區特製輕食餐車", 
+              desc: "園區內特色餐車補給", 
+              map: "https://www.google.com/maps/search/?api=1&query=吉卜力公園"
+            },
+            { 
+              time: "13:00 - 17:00", 
+              duration: "停留 4.0 小時", 
+              title: "吉卜力大倉庫 (已預約 13:00 入場)", 
+              desc: "沉浸式吉卜力經典動畫場景重現", 
+              map: "https://www.google.com/maps/search/?api=1&query=ジブリの大倉庫"
+            },
+            { 
+              time: "18:30 - 20:30", 
+              duration: "停留 2.0 小時", 
+              title: "晚餐：あつた蓬萊軒 鰻魚飯三吃", 
+              desc: "松坂屋店（營業至 22:00）", 
+              map: "https://www.google.com/maps/search/?api=1&query=あつた蓬莱軒+松坂屋店",
+              food: "あつた蓬萊軒 Hitsumabushi (ひつまぶし)",
+              foodReason: "百年名店創始Hitsumabushi！備長炭烤至金黃微焦，三吃法（原味、配料、茶泡飯）層次豐富極致享受。",
+              foodMap: "https://www.google.com/maps/search/?api=1&query=あつた蓬莱軒+松坂屋店"
+            }
+          ]
+        },
+        {
+          date: "11/24 (二) Day 4",
+          title: "綠洲21 ➔ 敘敘苑燒肉 ➔ AEON 則武園 Shopping",
+          items: [
+            { 
+              time: "10:30 - 13:00", 
+              duration: "停留 2.5 小時", 
+              title: "久屋大通公園 & RAYARD Hisaya-odori Park", 
+              desc: "綠洲 21 水之宇宙船散步", 
+              map: "https://www.google.com/maps/search/?api=1&query=RAYARD+Hisaya-odori+Park",
+              exit: "久屋大通站 2號出口"
+            },
+            { 
+              time: "13:00 - 14:30", 
+              duration: "停留 1.5 小時", 
+              title: "午餐：敘敘苑燒肉 (JR Gate Tower店)", 
+              desc: "高空景觀燒肉商業午餐", 
+              map: "https://www.google.com/maps/search/?api=1&query=叙々苑+JRゲートタワー店",
+              food: "敘敘苑 燒肉商業套餐",
+              foodReason: "超划算精緻燒肉！午餐套餐包含特選燒肉、海鮮與敘敘苑招牌特調沙拉醬，CP值爆表。",
+              foodMap: "https://www.google.com/maps/search/?api=1&query=叙々苑+JRゲートタワー店"
+            },
+            { 
+              time: "14:30 - 17:30", 
+              duration: "停留 3.0 小時", 
+              title: "永旺夢樂城名古屋則武園 (AEON MALL)", 
+              desc: "打卡絕美 TSUTAYA BOOKSTORE 書牆與血拼", 
+              map: "https://www.google.com/maps/search/?api=1&query=AEON+MALL+Nagoya+Noritake+Garden",
+              exit: "名古屋站龜島站 2號出口 徒步 6 分鐘"
+            },
+            { 
+              time: "17:30 - 20:30", 
+              duration: "停留 3.0 小時", 
+              title: "名站百貨與地下街補貨", 
+              desc: "JR高島屋 / Pass'e / Bic Camera 電器採購", 
+              map: "https://www.google.com/maps/search/?api=1&query=JR名古屋タカシマヤ"
+            },
+            { 
+              time: "20:30", 
+              duration: "停留 1.5 小時", 
+              title: "晚餐：備長鰻魚飯 & HARBS 高島屋店", 
+              desc: "名站商圈美食響宴", 
+              map: "https://www.google.com/maps/search/?api=1&query=ひつまぶし備長+名古屋駅"
+            }
+          ]
+        },
+        {
+          date: "11/25 (三) Day 5",
+          title: "白川鄉合掌村 ➔ 高山老街 ➔ 高山櫻庵",
+          items: [
+            { 
+              time: "09:00 - 09:30", 
+              duration: "停留 0.5 小時", 
+              title: "BASE LAYER HOTEL 退房 & 名古屋站取車", 
+              desc: "辦理退房手續，取車準備自駕行程", 
+              map: "https://www.google.com/maps/search/?api=1&query=Nagoya+Station+Rent+a+Car"
+            },
+            {
+              isTransit: true,
+              time: "09:30",
+              title: "自駕：名古屋 ➔ 白川鄉合掌村",
+              desc: "經東海北陸自動車道（車程約 2 小時）",
+              map: "https://www.google.com/maps/dir/?api=1&origin=名古屋駅&destination=白川郷&travelmode=driving"
+            },
+            { 
+              time: "11:30 - 13:40", 
+              duration: "停留 2.17 小時", 
+              title: "白川鄉合掌村 散策與午餐", 
+              desc: "童話般世界文化遺產聚落", 
+              map: "https://www.google.com/maps/search/?api=1&query=白川郷合掌造り集落",
+              food: "白川鄉 飛驒牛朴葉味噌燒",
+              foodReason: "在合掌造老屋內品嚐以朴葉鋪底、淋上特製味噌煎烤的飛驒牛，肉香與朴葉香完美交融！",
+              foodMap: "https://www.google.com/maps/search/?api=1&query=白川郷+飛驒牛"
+            },
+            {
+              isTransit: true,
+              time: "13:40",
+              title: "自駕：白川鄉 ➔ 飛驒高山",
+              desc: "經中部縱貫自動車道（車程約 50 分鐘）",
+              map: "https://www.google.com/maps/dir/?api=1&origin=白川郷&destination=高山櫻庵&travelmode=driving"
+            },
+            { 
+              time: "14:30 - 15:00", 
+              duration: "停留 0.5 小時", 
+              title: "高山櫻庵 Check-in & 停車", 
+              desc: "辦理手續寄放行李（Check-in 開始為 15:00）", 
+              map: "https://www.google.com/maps/search/?api=1&query=高山櫻庵"
+            },
+            { 
+              time: "15:00 - 17:30", 
+              duration: "停留 2.5 小時", 
+              title: "高山老街 (三町傳統建造物群)", 
+              desc: "老街採購飛驒煎餅與飛驒牛握壽司（店家多於 17:00 結束營業）", 
+              map: "https://www.google.com/maps/search/?api=1&query=飛驒高山古い町並",
+              food: "坂口屋 / 飛驒高山 飛驒牛握壽司",
+              foodReason: "老街人氣 NO.1！A5飛驒牛炙燒後放在蝦餅上，入口即化，帶有淡淡醬油香與焦香。",
+              foodMap: "https://www.google.com/maps/search/?api=1&query=坂口屋+飛驒牛握壽司"
+            },
+            { 
+              time: "18:00 - 20:30", 
+              duration: "停留 2.5 小時", 
+              title: "晚餐：味藏天國 A5飛驒牛燒肉", 
+              desc: "高山車站旁頂級飛驒牛燒肉", 
+              map: "https://www.google.com/maps/search/?api=1&query=味蔵天国",
+              food: "味藏天國 飛驒牛盛合燒肉",
+              foodReason: "JA農會直營！新鮮優質A5飛驒牛，油花如雪花般分布，油香濃郁、肉質極度嫩口。",
+              foodMap: "https://www.google.com/maps/search/?api=1&query=味蔵天国"
+            },
+            { 
+              time: "20:30~", 
+              duration: "自由泡湯", 
+              title: "高山櫻庵 頂樓私人貸切風呂體驗", 
+              desc: "享受免費私人溫泉與免費夜鳴拉麵", 
+              map: "https://www.google.com/maps/search/?api=1&query=高山櫻庵"
+            }
+          ]
+        },
+        {
+          date: "11/26 (四) Day 6",
+          title: "宮川朝市 ➔ 下呂溫泉街 ➔ 入住下呂山形屋",
+          items: [
+            { 
+              time: "08:30 - 10:30", 
+              duration: "停留 2.0 小時", 
+              title: "高山宮川朝市與老街巡禮", 
+              desc: "沿河畔逛特色手工藝與在地農特產", 
+              map: "https://www.google.com/maps/search/?api=1&query=宮川朝市",
+              food: "宮川朝市 飛驒牛串燒 & 布丁",
+              foodReason: "朝市現點現烤飛驒牛串燒，再配上一瓶香濃的高山飛驒牛奶或老街手工布丁！",
+              foodMap: "https://www.google.com/maps/search/?api=1&query=宮川朝市"
+            },
+            {
+              isTransit: true,
+              time: "10:30",
+              title: "自駕：高山櫻庵退房 ➔ 下呂溫泉",
+              desc: "高山櫻庵 11:00 前退房。走國道 41 號（車程約 1 小時）",
+              map: "https://www.google.com/maps/dir/?api=1&origin=高山櫻庵&destination=下呂山形屋&travelmode=driving"
+            },
+            { 
+              time: "11:30 - 14:30", 
+              duration: "停留 3.0 小時", 
+              title: "下呂溫泉街散策、足湯與午餐", 
+              desc: "體驗日本三大名湯之一與免費足湯", 
+              map: "https://www.google.com/maps/search/?api=1&query=下呂温泉街",
+              food: "湯之島館 / 湯之島 Pudding & 飛驒牛壽喜燒",
+              foodReason: "下呂必吃溫泉蛋布丁 (溫玉ソフト)！將溫泉蛋融入冰淇淋與布丁，滑順綿密超獨特。",
+              foodMap: "https://www.google.com/maps/search/?api=1&query=ゆあみ屋+下呂温泉"
+            },
+            { 
+              time: "15:00", 
+              duration: "入住大限 19:30", 
+              title: "下呂山形屋 Check-in", 
+              desc: "⚠️ 提醒：含晚餐方案需於 19:30 前完成入住，以免影響懷石出菜！", 
+              map: "https://www.google.com/maps/search/?api=1&query=下呂山形屋"
+            },
+            { 
+              time: "15:30 - 18:00", 
+              duration: "停留 2.5 小時", 
+              title: "山形屋私人泡湯與溫泉街漫步", 
+              desc: "享受日本三大名湯潤膚肌膚", 
+              map: "https://www.google.com/maps/search/?api=1&query=下呂山形屋"
+            },
+            { 
+              time: "18:30 - 20:30", 
+              duration: "停留 2.0 小時", 
+              title: "晚餐：山形屋 A5飛驒牛尊享懷石料理", 
+              desc: "旅館精緻溫泉懷石大餐", 
+              map: "https://www.google.com/maps/search/?api=1&query=下呂山形屋"
+            }
+          ]
+        },
+        {
+          date: "11/27 (五) Day 7",
+          title: "小原四季櫻 ➔ 香嵐溪夜楓 ➔ 入住金山",
+          items: [
+            { 
+              time: "09:30 - 10:00", 
+              duration: "停留 0.5 小時", 
+              title: "下呂山形屋退房", 
+              desc: "退房截止時間 10:00，準備自駕前往小原", 
+              map: "https://www.google.com/maps/search/?api=1&query=下呂山形屋"
+            },
+            {
+              isTransit: true,
+              time: "10:00",
+              title: "自駕：下呂 ➔ 小原四季櫻之里",
+              desc: "車程約 1.75 小時",
+              map: "https://www.google.com/maps/dir/?api=1&origin=下呂山形屋&destination=小原ふれあい公園&travelmode=driving"
+            },
+            { 
+              time: "11:45 - 13:45", 
+              duration: "停留 2.0 小時", 
+              title: "小原四季櫻 (Obara Fureai Park) & 當地午餐", 
+              desc: "櫻花與秋天紅葉同時綻放的奇蹟絕景", 
+              map: "https://www.google.com/maps/search/?api=1&query=小原ふれあい公園",
+              food: "小原地雞與季節五平餅",
+              foodReason: "小原祭典屋台特產！香氣四溢的粳米醬油烤五平餅，配上香濃地雞肉湯，非常暖胃。",
+              foodMap: "https://www.google.com/maps/search/?api=1&query=小原ふれあい公園"
+            },
+            {
+              isTransit: true,
+              time: "13:45",
+              title: "自駕：小原 ➔ 香嵐溪",
+              desc: "車程約 1.25 小時",
+              map: "https://www.google.com/maps/dir/?api=1&origin=小原ふれあい公園&destination=香嵐渓&travelmode=driving"
+            },
+            { 
+              time: "15:00 - 18:00", 
+              duration: "停留 3.0 小時", 
+              title: "香嵐溪 Korankei Gorge (賞楓 ➔ 16:30 夜楓點燈)", 
+              desc: "日本東海地區 NO.1 賞楓勝地，巴川待月橋夜楓倒影", 
+              map: "https://www.google.com/maps/search/?api=1&query=香嵐渓",
+              food: "香嵐溪 待月橋刀削麵 & 楓葉天婦羅",
+              foodReason: "香嵐溪老街名物「楓葉天婦羅 (紅葉の天ぷら)」，將食用鹽漬楓葉裹粉炸得酥脆，極具特色！",
+              foodMap: "https://www.google.com/maps/search/?api=1&query=香嵐渓+屋台"
+            },
+            {
+              isTransit: true,
+              time: "18:00",
+              title: "自駕：香嵐溪 ➔ 名古屋金山",
+              desc: "駕車返回市區（車程約 1.5 小時）",
+              map: "https://www.google.com/maps/dir/?api=1&origin=香嵐渓&destination=Comfort+Hotel+Nagoya+Kanayama&travelmode=driving"
+            },
+            { 
+              time: "19:30 - 20:00", 
+              duration: "停留 0.5 小時", 
+              title: "入住 名古屋金山舒適飯店", 
+              desc: "Check-in 辦理（開放時間 15:00 後）", 
+              map: "https://www.google.com/maps/search/?api=1&query=Comfort+Hotel+Nagoya+Kanayama"
+            },
+            { 
+              time: "20:00 - 21:30", 
+              duration: "停留 1.5 小時", 
+              title: "晚餐：麵屋 Hanabi (金山店)", 
+              desc: "台灣拌麵 (台灣まぜそば) 發源創始店", 
+              map: "https://www.google.com/maps/search/?api=1&query=麺屋はなび+金山店",
+              food: "麵屋 Hanabi 台灣拌麵",
+              foodReason: "名古屋拉麵界的傳奇！獨門辣肉醬加生雞蛋黃、海苔與粗麵，拌勻後香辣濃郁絕讚。",
+              foodMap: "https://www.google.com/maps/search/?api=1&query=麺屋はなび+金山店"
+            }
+          ]
+        },
+        {
+          date: "11/28 (六) Day 8",
+          title: "東別院市集 ➔ 大須商圈 ➔ 明太子博物館 ➔ 返港",
+          items: [
+            { 
+              time: "09:00 - 09:30", 
+              duration: "停留 0.5 小時", 
+              title: "退房寄放行李 & 辦理還車", 
+              desc: "金山舒適飯店退房截止時間 10:00", 
+              map: "https://www.google.com/maps/search/?api=1&query=Comfort+Hotel+Nagoya+Kanayama"
+            },
+            {
+              isTransit: true,
+              time: "09:30",
+              title: "金山站 ➔ 東別院",
+              desc: "地鐵名城線 1 站至「東別院站」",
+              map: "https://www.google.com/maps/dir/?api=1&origin=金山駅(愛知県)&destination=東別院駅&travelmode=transit"
+            },
+            { 
+              time: "10:00 - 12:00", 
+              duration: "停留 2.0 小時", 
+              title: "東別院暮らしの朝市 (手作市集)", 
+              desc: "營業時間 10:00 - 14:00，聚集在地質感手作與咖啡餐車", 
+              map: "https://www.google.com/maps/search/?api=1&query=東別院暮らしの朝市",
+              exit: "東別院站 4號出口 徒步 3 分鐘",
+              food: "東別院市集 特色手沖咖啡與手作手提甜點",
+              foodReason: "名古屋最紅手作市集！匯集眾多愛知在地質感獨立咖啡店與手作麵包塔派。",
+              foodMap: "https://www.google.com/maps/search/?api=1&query=東別院"
+            },
+            { 
+              time: "12:00 - 14:30", 
+              duration: "停留 2.5 小時", 
+              title: "大須商店街 Shopping 採購與午餐", 
+              desc: "充滿昭和風情與潮流店鋪的拱廊商店街", 
+              map: "https://www.google.com/maps/search/?api=1&query=大須商店街",
+              exit: "大須觀音站 2號出口 或 上前津站 8號出口",
+              food: "李さんの台湾名物屋台 炸雞 / 矢場とん 味噌豬排",
+              foodReason: "大須必吃矢場とん炸豬排！淋上滾燙赤味噌醬汁，豬排香酥多汁，超級下飯。",
+              foodMap: "https://www.google.com/maps/search/?api=1&query=矢場とん+大須本店"
+            },
+            {
+              isTransit: true,
+              time: "14:30",
+              title: "金山站 ➔ 常滑站 (Mentai Park)",
+              desc: "返回飯店取行李，搭乘名鐵 μ-SKY 特急至「常滑站」（約 28 分鐘）",
+              map: "https://www.google.com/maps/dir/?api=1&origin=金山駅(愛知県)&destination=常滑駅&travelmode=transit"
+            },
+            { 
+              time: "15:30 - 17:00", 
+              duration: "停留 1.5 小時", 
+              title: "Mentai Park Tokoname (明太子博物館)", 
+              desc: "週末營業至 18:00，時間完美契合！", 
+              map: "https://www.google.com/maps/search/?api=1&query=Mentai+Park+Tokoname",
+              food: "Mentai Park 巨型新鮮明太子飯糰",
+              foodReason: "廠區直送超爆量新鮮明太子飯糰！明太子鹹香濃郁，現場還有明太子霜淇淋可以挑戰。",
+              foodMap: "https://www.google.com/maps/search/?api=1&query=Mentai+Park+Tokoname"
+            },
+            {
+              isTransit: true,
+              time: "17:00",
+              title: "常滑 ➔ 中部國際機場",
+              desc: "搭名鐵 1 站至「中部國際機場站」",
+              map: "https://www.google.com/maps/dir/?api=1&origin=常滑駅&destination=中部国際空港&travelmode=transit"
+            },
+            { 
+              time: "17:15 - 20:40", 
+              duration: "登機準備", 
+              title: "中部國際機場辦理登機 & 免稅購物", 
+              desc: "搭乘 UO685 班機 20:40 起飛返抵香港", 
+              map: "https://www.google.com/maps/search/?api=1&query=中部国際空港"
+            }
+          ]
+        }
+      ]
+    };
+
+    function loadData() {
+      const local = localStorage.getItem("pochacco_travel_data_v3");
+      if (local) {
+        try {
+          const parsed = JSON.parse(local);
+          if (parsed.version === DATA_VERSION) {
+            appData = parsed;
+          }
+        } catch (e) {
+          console.error("Parse failed", e);
+        }
+      }
+      saveData();
+    }
+
+    function saveData() {
+      try {
+        localStorage.setItem("pochacco_travel_data_v3", JSON.stringify(appData));
+        const status = document.getElementById("saveStatus");
+        status.innerText = "💾 已儲存";
+        status.className = "bg-white/30 backdrop-blur-md px-2.5 py-1 rounded-full text-[11px] font-bold border border-white/50 text-white";
+      } catch (e) {
+        const status = document.getElementById("saveStatus");
+        status.innerText = "⚠️ 儲存失敗";
+        status.className = "bg-red-500 text-white px-2.5 py-1 rounded-full text-[11px] font-bold";
+      }
+    }
+
+    function switchTab(tab) {
+      document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('text-pochacco-darkPurple', 'bg-pochacco-lightBlue', 'border', 'border-pochacco-purple');
+        b.classList.add('text-gray-500');
+      });
+
+      document.getElementById(`sec-${tab}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`tab-${tab}`);
+      activeBtn.classList.add('text-pochacco-darkPurple', 'bg-pochacco-lightBlue', 'border', 'border-pochacco-purple');
+      activeBtn.classList.remove('text-gray-500');
+    }
+
+    function renderItinerary() {
+      const btnContainer = document.getElementById("dayButtons");
+      btnContainer.innerHTML = "";
+      
+      appData.itinerary.forEach((day, idx) => {
+        const btn = document.createElement("button");
+        btn.className = `flex-shrink-0 px-3 py-1.5 rounded-xl font-bold text-xs transition ${
+          appData.currentDay === idx 
+            ? "bg-pochacco-purple text-white shadow-md scale-105" 
+            : "bg-white text-slate-600 border border-pochacco-purple/30 hover:bg-pochacco-lightBlue"
+        }`;
+        btn.innerText = day.date.split(" ")[0] + " " + day.date.split(" ")[1];
+        btn.onclick = () => {
+          appData.currentDay = idx;
+          saveData();
+          renderItinerary();
+        };
+        btnContainer.appendChild(btn);
+      });
+
+      const current = appData.itinerary[appData.currentDay];
+      const detailContainer = document.getElementById("dayDetail");
+      
+      let html = `
+        <div class="bg-white p-3 rounded-2xl border-2 border-pochacco-purple shadow-sm">
+          <h2 class="font-extrabold text-sm text-pochacco-darkPurple">${current.date}</h2>
+          <p class="text-xs text-gray-500 font-bold mt-0.5">${current.title}</p>
+        </div>
+        <div class="relative timeline-line space-y-3 pt-1">
+      `;
+
+      current.items.forEach((item) => {
+        if (item.isTransit) {
+          html += `
+            <div class="relative pl-8 my-2">
+              <div class="absolute left-2.5 top-1.5 w-3 h-3 bg-pochacco-purple rounded-full border-2 border-white shadow-sm z-10"></div>
+              <div class="p-2 bg-pochacco-lightBlue/80 rounded-xl border border-pochacco-blue flex justify-between items-center text-xs">
+                <div>
+                  <span class="font-bold text-pochacco-darkPurple">🚃 交通：${item.title}</span>
+                  <p class="text-[11px] text-gray-500">${item.desc}</p>
+                </div>
+                <a href="${item.map}" target="_blank" class="text-[11px] font-bold text-blue-600 bg-white px-2 py-1 rounded-lg border border-blue-200 flex items-center gap-1">
+                  <i class="fa-solid fa-diamond-turn-right text-xs"></i> 路線
+                </a>
+              </div>
+            </div>
+          `;
+        } else {
+          html += `
+            <div class="relative pl-8">
+              <div class="absolute left-2.5 top-3 w-3.5 h-3.5 bg-pochacco-darkPurple rounded-full border-2 border-white shadow-md z-10"></div>
+              <div class="pochacco-card p-3 space-y-2">
+                <div class="flex justify-between items-start">
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-extrabold text-xs text-pochacco-darkPurple bg-pochacco-lightBlue px-2 py-0.5 rounded-md border border-pochacco-purple/30">
+                      ⏰ ${item.time}
+                    </span>
+                    ${item.duration ? `<span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-md font-bold">${item.duration}</span>` : ''}
+                  </div>
+                  <a href="${item.map}" target="_blank" class="text-xs text-red-500 font-bold flex items-center gap-1 bg-red-50 px-2 py-1 rounded-lg border border-red-200 hover:bg-red-100">
+                    <i class="fa-solid fa-location-dot"></i> 地圖
+                  </a>
+                </div>
+
+                <div>
+                  <p class="font-bold text-sm text-slate-800">${item.title}</p>
+                  ${item.desc ? `<p class="text-xs text-gray-600 mt-0.5">${item.desc}</p>` : ''}
+                </div>
+
+                ${item.exit ? `
+                  <div class="text-[11px] text-pochacco-darkPurple bg-purple-50 p-1.5 rounded-lg border border-purple-100 flex items-center gap-1">
+                    <i class="fa-solid fa-train-subway"></i>
+                    <span>出口指示：${item.exit}</span>
+                  </div>
+                ` : ''}
+
+                ${item.food ? `
+                  <div class="bg-pochacco-foodBg p-2 rounded-xl border border-pink-200 space-y-1">
+                    <div class="flex justify-between items-center">
+                      <span class="font-bold text-xs text-pink-700 flex items-center gap-1">
+                        🍴 美食追擊：${item.food}
+                      </span>
+                      ${item.foodMap ? `
+                        <a href="${item.foodMap}" target="_blank" class="text-[10px] text-pink-600 bg-white px-1.5 py-0.5 rounded border border-pink-200 font-bold">
+                          餐廳導航
+                        </a>
+                      ` : ''}
+                    </div>
+                    <p class="text-[11px] text-pink-800">${item.foodReason}</p>
+                  </div>
+                ` : ''}
+              </div>
+            </div>
+          `;
+        }
+      });
+
+      html += `</div>`;
+      detailContainer.innerHTML = html;
+    }
+
+    // Accounting Logic
+    function toggleSplitInput() {
+      const type = document.getElementById("accSplitType").value;
+      if (type === "even") {
+        document.getElementById("evenPeopleBlock").classList.remove("hidden");
+        document.getElementById("customPeopleBlock").classList.add("hidden");
+      } else {
+        document.getElementById("evenPeopleBlock").classList.add("hidden");
+        document.getElementById("customPeopleBlock").classList.remove("hidden");
+      }
+    }
+
+    function addExpense() {
+      const name = document.getElementById("accItemName").value.trim();
+      const currency = document.getElementById("accCurrency").value;
+      const amount = parseFloat(document.getElementById("accAmount").value);
+      const payer = document.getElementById("accPayer").value.trim();
+      const splitType = document.getElementById("accSplitType").value;
+
+      if (!name || isNaN(amount) || !payer) {
+        alert("請完整輸入項目、金額與付款人！");
+        return;
+      }
+
+      let splits = {};
+      if (splitType === "even") {
+        const count = parseInt(document.getElementById("accPeopleCount").value) || 1;
+        const perPerson = amount / count;
+        splits["A"] = perPerson;
+        splits["B"] = perPerson;
+      } else {
+        const customText = document.getElementById("accCustomDetails").value.trim();
+        const lines = customText.split("\n");
+        lines.forEach(line => {
+          const parts = line.split(":");
+          if (parts.length === 2) {
+            splits[parts[0].trim()] = parseFloat(parts[1]) || 0;
+          }
+        });
+      }
+
+      appData.expenses.push({
+        id: Date.now(),
+        date: new Date().toLocaleDateString('zh-TW'),
+        name,
+        currency,
+        amount,
+        payer,
+        splits,
+        settled: false
+      });
+
+      saveData();
+      renderExpenses();
+      calculateSettlement();
+
+      document.getElementById("accItemName").value = "";
+      document.getElementById("accAmount").value = "";
+    }
+
+    function toggleSettled(id) {
+      const exp = appData.expenses.find(e => e.id === id);
+      if (exp) {
+        exp.settled = !exp.settled;
+        saveData();
+        renderExpenses();
+        calculateSettlement();
+      }
+    }
+
+    function deleteExpense(id) {
+      appData.expenses = appData.expenses.filter(e => e.id !== id);
+      saveData();
+      renderExpenses();
+      calculateSettlement();
+    }
+
+    function clearSettled() {
+      appData.expenses = appData.expenses.filter(e => !e.settled);
+      saveData();
+      renderExpenses();
+      calculateSettlement();
+    }
+
+    function renderExpenses() {
+      const container = document.getElementById("expenseList");
+      container.innerHTML = "";
+
+      if (appData.expenses.length === 0) {
+        container.innerHTML = `<p class="text-gray-400 text-center py-4">尚無記帳項目</p>`;
+        return;
+      }
+
+      appData.expenses.forEach(exp => {
+        const div = document.createElement("div");
+        div.className = `p-2.5 rounded-xl border flex justify-between items-center transition ${
+          exp.settled 
+            ? "bg-gray-100 border-gray-200 opacity-60 line-through" 
+            : "bg-white border-pochacco-purple/30 shadow-sm"
+        }`;
+
+        div.innerHTML = `
+          <div>
+            <div class="font-bold text-slate-800">${exp.name}</div>
+            <div class="text-[10px] text-gray-500">
+              ${exp.payer} 先付 • ${exp.currency} $${exp.amount}
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="toggleSettled(${exp.id})" class="text-xs px-2 py-1 rounded ${exp.settled ? 'bg-gray-300' : 'bg-green-100 text-green-700 font-bold'}">
+              ${exp.settled ? '已結清' : '標為結清'}
+            </button>
+            <button onclick="deleteExpense(${exp.id})" class="text-red-400 hover:text-red-600 px-1">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function calculateSettlement() {
+      const activeExpenses = appData.expenses.filter(e => !e.settled);
+      const resContainer = document.getElementById("settlementResult");
+
+      if (activeExpenses.length === 0) {
+        resContainer.innerHTML = `<p class="text-gray-500 text-center">所有帳目均已結清！🎉</p>`;
+        return;
+      }
+
+      const netBalances = {};
+
+      activeExpenses.forEach(exp => {
+        const rate = exp.currency === "HKD" ? (1 / appData.exchangeRate) : 1;
+        const totalInJPY = exp.amount * rate;
+
+        netBalances[exp.payer] = (netBalances[exp.payer] || 0) + totalInJPY;
+
+        for (const [person, amt] of Object.entries(exp.splits)) {
+          const personAmtInJPY = amt * rate;
+          netBalances[person] = (netBalances[person] || 0) - personAmtInJPY;
+        }
+      });
+
+      let debtors = [];
+      let creditors = [];
+
+      for (const [person, net] of Object.entries(netBalances)) {
+        if (net < -0.01) debtors.push({ name: person, amount: -net });
+        else if (net > 0.01) creditors.push({ name: person, amount: net });
+      }
+
+      let settlementLines = [];
+      let i = 0, j = 0;
+
+      while (i < debtors.length && j < creditors.length) {
+        let debtor = debtors[i];
+        let creditor = creditors[j];
+        let payAmountJPY = Math.min(debtor.amount, creditor.amount);
+        let payAmountHKD = payAmountJPY * appData.exchangeRate;
+
+        settlementLines.push(
+          `<strong>（${debtor.name}）</strong> 應該付 <strong>（${creditor.name}）</strong>：<br/>
+           👉 <strong>¥${Math.round(payAmountJPY).toLocaleString()} JPY</strong> / <strong>HK$${payAmountHKD.toFixed(1)} HKD</strong>`
+        );
+
+        debtor.amount -= payAmountJPY;
+        creditor.amount -= payAmountJPY;
+
+        if (debtor.amount < 0.01) i++;
+        if (creditor.amount < 0.01) j++;
+      }
+
+      if (settlementLines.length === 0) {
+        resContainer.innerHTML = `<p class="text-green-600 font-bold text-center">雙方帳目平衡，無須付錢！</p>`;
+      } else {
+        resContainer.innerHTML = settlementLines.join("<hr class='my-2 border-pochacco-purple/20'>");
+      }
+    }
+
+    function updateRate() {
+      const val = parseFloat(document.getElementById("exchangeRateInput").value);
+      if (val > 0) {
+        appData.exchangeRate = val;
+        saveData();
+        calculateSettlement();
+      }
+    }
+
+    function convertFromJPY() {
+      const jpy = parseFloat(document.getElementById("inputJPY").value);
+      if (!isNaN(jpy)) {
+        document.getElementById("inputHKD").value = (jpy * appData.exchangeRate).toFixed(2);
+      } else {
+        document.getElementById("inputHKD").value = "";
+      }
+    }
+
+    function convertFromHKD() {
+      const hkd = parseFloat(document.getElementById("inputHKD").value);
+      if (!isNaN(hkd)) {
+        document.getElementById("inputJPY").value = Math.round(hkd / appData.exchangeRate);
+      } else {
+        document.getElementById("inputJPY").value = "";
+      }
+    }
+
+    function exportAsText() {
+      const text = document.getElementById("settlementResult").innerText;
+      navigator.clipboard.writeText("🐶 名古屋旅遊結算明細 🐶\n" + text).then(() => {
+        alert("已成功複製結算文字至剪貼簿！");
+      });
+    }
+
+    function exportAsImage() {
+      const target = document.getElementById("exportArea");
+      html2canvas(target).then(canvas => {
+        const link = document.createElement("a");
+        link.download = "Pochacco-Settlement.png";
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    }
+
+    window.onload = () => {
+      loadData();
+      document.getElementById("exchangeRateInput").value = appData.exchangeRate;
+      renderItinerary();
+      renderExpenses();
+      calculateSettlement();
+    };
+  </script>
+</body>
+</html>
